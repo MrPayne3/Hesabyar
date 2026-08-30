@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حساب‌یار پروژه | مدیریت خرید و انبار</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f4f6f8;color:#20252b}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.app{display:flex;min-height:100vh}
+.sidebar{width:250px;background:#18212b;color:#fff;padding:22px 16px;position:sticky;top:0;height:100vh}
+.logo{font-size:22px;font-weight:800;padding:10px 12px 24px}.logo small{display:block;color:#9da9b5;font-size:11px;margin-top:6px;font-weight:400}
+.nav button{width:100%;text-align:right;background:transparent;color:#cbd3da;padding:13px 14px;border-radius:10px;margin:3px 0}.nav button:hover,.nav button.active{background:#293744;color:#fff}
+.main{flex:1;padding:24px;max-width:1500px;margin:auto;width:100%}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}.top h1{margin:0;font-size:25px}.top p{margin:7px 0 0;color:#68737d;font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{padding:10px 15px;border-radius:9px;background:#1f6feb;color:#fff}.btn.secondary{background:#fff;color:#333;border:1px solid #d9dee3}.btn.danger{background:#d64545}.btn.success{background:#198754}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.card{background:#fff;border:1px solid #e3e7eb;border-radius:14px;padding:18px;box-shadow:0 2px 10px #00000008}.card .label{color:#6b747d;font-size:13px}.card .value{font-size:24px;font-weight:800;margin-top:9px}.card .sub{font-size:11px;color:#8b949e;margin-top:5px}
+.panel{background:#fff;border:1px solid #e3e7eb;border-radius:14px;padding:18px;margin-bottom:18px}.panel h2{font-size:17px;margin:0 0 16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:11px 9px;border-bottom:1px solid #edf0f2;text-align:right;font-size:13px}th{background:#fafbfc;color:#59636d;font-weight:700}
+.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field label{display:block;font-size:12px;color:#59636d;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #d7dde2;border-radius:8px;background:#fff}.field.full{grid-column:1/-1}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.modal.show{display:flex}.modalbox{background:#fff;width:min(650px,100%);max-height:90vh;overflow:auto;border-radius:15px;padding:20px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.close{background:#eef1f3;border-radius:8px;padding:5px 10px}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;background:#eef5ff;color:#1f6feb}.muted{color:#78838d}.empty{text-align:center;padding:35px;color:#8a949d}
+.search{width:100%;padding:10px;border:1px solid #d7dde2;border-radius:8px;margin-bottom:12px}
+.section{display:none}.section.active{display:block}.mini{font-size:11px}.money{font-variant-numeric:tabular-nums}.row-actions{display:flex;gap:5px}.row-actions button{padding:5px 8px;border-radius:6px;background:#eef1f3;font-size:11px}.row-actions .del{color:#c62828}
+.toast{position:fixed;bottom:20px;left:20px;background:#18212b;color:#fff;padding:11px 15px;border-radius:9px;display:none;z-index:20}
+@media(max-width:900px){.sidebar{width:75px;padding:15px 8px}.logo{font-size:0;text-align:center}.logo:before{content:"ح";font-size:25px}.logo small,.nav button span{display:none}.nav button{text-align:center}.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:600px){.main{padding:14px}.cards{grid-template-columns:1fr 1fr;gap:9px}.card{padding:13px}.card .value{font-size:18px}.top{align-items:flex-start}.top h1{font-size:19px}.formgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">حساب‌یار پروژه<small>مدیریت خرید و انبار ساختمان</small></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard">📊 <span>داشبورد</span></button>
+    <button data-page="projects">🏗️ <span>پروژه‌ها</span></button>
+    <button data-page="purchases">🧾 <span>خریدها</span></button>
+    <button data-page="items">📦 <span>کالا و انبار</span></button><button data-page="movements">🔄 <span>ورود و خروج</span></button>
+    <button data-page="suppliers">👤 <span>تأمین‌کنندگان</span></button>
+    <button data-page="payments">💳 <span>پرداخت‌ها</span></button><button data-page="ledger">📒 <span>دفتر حساب</span></button>
+    <button data-page="reports">📈 <span>گزارش پروژه</span></button>
+    <button data-page="backup">💾 <span>پشتیبان‌گیری</span></button>
+  </nav>
+</aside>
+
+<main class="main">
+<div class="top">
+  <div><h1 id="title">داشبورد</h1><p>کنترل ساده و سریع خریدهای پروژه‌های ساختمانی</p></div>
+  <div class="actions">
+    <button class="btn" onclick="openPurchase()">+ ثبت خرید</button>
+    <button class="btn secondary" onclick="openProject()">+ پروژه</button>
+  </div>
+</div>
+
+<section id="dashboard" class="section active">
+ <div class="cards">
+  <div class="card"><div class="label">مجموع خریدها</div><div class="value money" id="totalPurchases">۰</div><div class="sub">تومان</div></div>
+  <div class="card"><div class="label">پرداخت‌شده</div><div class="value money" id="totalPaid">۰</div><div class="sub">تومان</div></div>
+  <div class="card"><div class="label">بدهی</div><div class="value money" id="totalDebt">۰</div><div class="sub">تومان</div></div>
+  <div class="card"><div class="label">پروژه‌ها</div><div class="value" id="projectCount">۰</div><div class="sub">پروژه فعال</div></div>
+ </div>
+ <div class="grid2">
+  <div class="panel"><h2>آخرین خریدها</h2><div id="recentPurchases"></div></div>
+  <div class="panel"><h2>وضعیت پروژه‌ها</h2><div id="projectSummary"></div></div>
+ </div>
+</section>
+
+<section id="projects" class="section">
+ <div class="panel"><div class="top"><h2>پروژه‌ها</h2><button class="btn" onclick="openProject()">+ افزودن پروژه</button></div><input class="search" placeholder="جست‌وجوی پروژه..." oninput="renderProjects(this.value)"><div id="projectsTable"></div></div>
+</section>
+
+<section id="purchases" class="section">
+ <div class="panel"><div class="top"><h2>خریدها</h2><button class="btn" onclick="openPurchase()">+ ثبت خرید</button></div><input class="search" placeholder="جست‌وجو در خریدها..." oninput="renderPurchases(this.value)"><div id="purchasesTable"></div></div>
+</section>
+
+<section id="items" class="section">
+ <div class="panel"><div class="top"><h2>کالا و انبار</h2><button class="btn" onclick="openItem()">+ افزودن کالا</button></div><input class="search" placeholder="جست‌وجوی کالا..." oninput="renderItems(this.value)"><div id="itemsTable"></div></div>
+</section>
+
+<section id="suppliers" class="section">
+ <div class="panel"><div class="top"><h2>تأمین‌کنندگان</h2><button class="btn" onclick="openSupplier()">+ افزودن تأمین‌کننده</button></div><input class="search" placeholder="جست‌وجوی تأمین‌کننده..." oninput="renderSuppliers(this.value)"><div id="suppliersTable"></div></div>
+</section>
+
+<section id="payments" class="section">
+ <div class="panel"><div class="top"><h2>پرداخت‌ها</h2><button class="btn" onclick="openPayment()">+ ثبت پرداخت</button></div><div id="paymentsTable"></div></div>
+</section>
+
+<section id="movements" class="section">
+<div class="panel"><div class="top"><h2>ورود و خروج انبار</h2><button class="btn" onclick="openMovement()">+ ثبت حرکت</button></div>
+<p class="muted mini">ورود = خرید/تحویل به انبار، خروج = مصرف یا انتقال از انبار. موجودی هر کالا خودکار به‌روزرسانی می‌شود.</p>
+<div id="movementsTable"></div></div></section>
+<section id="ledger" class="section">
+<div class="panel"><div class="top"><h2>دفتر بدهکار و بستانکار</h2><button class="btn" onclick="openLedgerEntry()">+ ثبت سند دستی</button></div>
+<p class="muted mini">خرید از تأمین‌کننده به‌صورت خودکار بدهکار و پرداخت به او بستانکار ثبت می‌شود. برای ثبت هزینه یا دریافت‌های متفرقه نیز می‌توانید سند دستی وارد کنید.</p>
+<div class="formgrid"><div class="field"><label>حساب</label><select id="ledgerAccount" onchange="renderLedger()"></select></div><div class="field"><label>نوع حساب</label><select id="ledgerType" onchange="renderLedger()"><option value="supplier">تأمین‌کننده</option><option value="project">پروژه</option><option value="all">همه</option></select></div></div>
+<div id="ledgerSummary"></div><div id="ledgerTable"></div></div></section>
+<section id="reports" class="section">
+ <div class="panel">
+  <div class="top"><h2>گزارش ریز پروژه</h2></div>
+  <div class="formgrid">
+   <div class="field"><label>انتخاب پروژه</label><select id="reportProject" onchange="renderReport()"></select></div>
+   <div class="field"><label>فیلتر کالا (اختیاری)</label><input id="reportItem" oninput="renderReport()" placeholder="مثلاً میلگرد"></div>
+  </div>
+ </div>
+ <div id="reportContent"></div>
+</section>
+
+<section id="backup" class="section">
+ <div class="panel"><h2>پشتیبان‌گیری و بازیابی</h2><p class="muted">اطلاعات در مرورگر همین دستگاه ذخیره می‌شود. برای اطمینان، مرتباً فایل پشتیبان بگیرید.</p>
+ <div class="actions"><button class="btn success" onclick="backup()">📥 دریافت فایل پشتیبان</button><label class="btn secondary">📤 بازیابی فایل<input type="file" accept=".json" hidden onchange="restore(this)"></label><button class="btn danger" onclick="resetData()">حذف همه اطلاعات</button></div>
+ </div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="modalhead"><h2 id="modalTitle"></h2><button class="close" onclick="closeModal()">✕</button></div><div id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='hesabyar_building_v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'null')||{projects:[],purchases:[],items:[],suppliers:[],payments:[],movements:[]}; db.movements=db.movements||[]; db.ledger=db.ledger||[];
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(db));renderAll()};
+const fa=n=>new Intl.NumberFormat('fa-IR').format(Number(n)||0);
+const money=n=>fa(n)+' تومان';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const toast=m=>{let t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2200)};
+const projectName=id=>db.projects.find(x=>x.id===id)?.name||'بدون پروژه';
+const supplierName=id=>db.suppliers.find(x=>x.id===id)?.name||'بدون تأمین‌کننده';
+
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function showPage(p){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));document.getElementById('title').textContent=document.querySelector(`[data-page="${p}"] span`)?.textContent||'داشبورد';renderAll()}
+
+function modal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+function openProject(){
+modal('افزودن پروژه',`<form onsubmit="addProject(event)"><div class="formgrid">
+<div class="field"><label>نام پروژه</label><input name="name" required placeholder="مثلاً ساختمان ونک"></div>
+<div class="field"><label>کد پروژه</label><input name="code" placeholder="P-001"></div>
+<div class="field"><label>کارفرما</label><input name="client"></div>
+<div class="field"><label>بودجه (تومان)</label><input name="budget" type="number"></div>
+<div class="field full"><label>توضیحات</label><textarea name="note"></textarea></div></div><br><button class="btn">ذخیره پروژه</button></form>`)
+}
+function addProject(e){e.preventDefault();let f=new FormData(e.target);db.projects.push({id:uid(),name:f.get('name'),code:f.get('code'),client:f.get('client'),budget:+f.get('budget')||0,note:f.get('note'),created:Date.now()});save();closeModal();toast('پروژه ثبت شد')}
+
+function openSupplier(){
+modal('افزودن تأمین‌کننده',`<form onsubmit="addSupplier(event)"><div class="formgrid">
+<div class="field"><label>نام / شرکت</label><input name="name" required></div><div class="field"><label>شماره تماس</label><input name="phone"></div><div class="field full"><label>توضیحات</label><textarea name="note"></textarea></div></div><br><button class="btn">ذخیره</button></form>`)
+}
+function addSupplier(e){e.preventDefault();let f=new FormData(e.target);db.suppliers.push({id:uid(),name:f.get('name'),phone:f.get('phone'),note:f.get('note')});save();closeModal();toast('تأمین‌کننده ثبت شد')}
+
+function openItem(){
+modal('افزودن کالا',`<form onsubmit="addItem(event)"><div class="formgrid">
+<div class="field"><label>نام کالا</label><input name="name" required placeholder="مثلاً میلگرد 16"></div>
+<div class="field"><label>واحد</label><select name="unit"><option>عدد</option><option>کیلوگرم</option><option>تن</option><option>کیسه</option><option>متر</option><option>مترمربع</option><option>مترمکعب</option><option>دستگاه</option><option>سایر</option></select></div>
+<div class="field"><label>موجودی اولیه</label><input name="stock" type="number" step="any" value="0"></div>
+<div class="field"><label>حداقل موجودی</label><input name="min" type="number" step="any" value="0"></div></div><br><button class="btn">ذخیره کالا</button></form>`)
+}
+function addItem(e){e.preventDefault();let f=new FormData(e.target);db.items.push({id:uid(),name:f.get('name'),unit:f.get('unit'),stock:+f.get('stock')||0,min:+f.get('min')||0});save();closeModal();toast('کالا ثبت شد')}
+
+function openPurchase(){
+if(!db.projects.length){toast('اول یک پروژه بسازید');showPage('projects');return}
+modal('ثبت خرید',`<form onsubmit="addPurchase(event)"><div class="formgrid">
+<div class="field"><label>پروژه</label><select name="project" required>${db.projects.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div>
+<div class="field"><label>تأمین‌کننده</label><select name="supplier"><option value="">بدون تأمین‌کننده</option>${db.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div>
+<div class="field"><label>کالا</label><select name="item" required>${db.items.map(x=>`<option value="${x.id}">${esc(x.name)} (${esc(x.unit)})</option>`).join('')}</select></div>
+<div class="field"><label>تعداد / مقدار</label><input name="qty" type="number" step="any" required></div>
+<div class="field"><label>قیمت واحد (تومان)</label><input name="price" type="number" required></div>
+<div class="field"><label>تاریخ</label><input name="date" type="text" placeholder="مثلاً ۱۴۰۵/۰۶/۰۷" value=""></div>
+<div class="field"><label>پرداخت‌شده (تومان)</label><input name="paid" type="number" value="0"></div>
+<div class="field"><label>روش پرداخت</label><select name="method"><option>نقدی</option><option>کارت</option><option>حواله</option><option>چک</option><option>نسیه</option></select></div>
+<div class="field full"><label>شرح</label><textarea name="note" placeholder="شماره فاکتور، محل تحویل و..."></textarea></div>
+</div><br><button class="btn">ثبت خرید</button></form>`)
+}
+function addPurchase(e){e.preventDefault();let f=new FormData(e.target),qty=+f.get('qty')||0,price=+f.get('price')||0,paid=+f.get('paid')||0,item=db.items.find(x=>x.id===f.get('item'));if(item)item.stock+=qty;
+db.purchases.push({id:uid(),project:f.get('project'),supplier:f.get('supplier'),item:f.get('item'),qty,price,total:qty*price,paid,date:f.get('date')||new Date().toLocaleDateString('fa-IR'),method:f.get('method'),note:f.get('note')});save();closeModal();toast('خرید ثبت شد')}
+function openPayment(){
+if(!db.purchases.length){toast('اول خریدی ثبت کنید');return}
+modal('ثبت پرداخت',`<form onsubmit="addPayment(event)"><div class="formgrid"><div class="field full"><label>خرید مربوطه</label><select name="purchase" required>${db.purchases.map(x=>`<option value="${x.id}">${esc(projectName(x.project))} | ${esc(itemName(x.item))} | ${money(x.total-x.paid)} بدهی</option>`).join('')}</select></div><div class="field"><label>مبلغ پرداخت</label><input name="amount" type="number" required></div><div class="field"><label>تاریخ</label><input name="date" placeholder="۱۴۰۵/۰۶/۰۷"></div><div class="field"><label>روش</label><select name="method"><option>کارت</option><option>نقدی</option><option>حواله</option><option>چک</option></select></div><div class="field"><label>شماره پیگیری / چک</label><input name="ref"></div></div><br><button class="btn">ثبت پرداخت</button></form>`)
+}
+function itemName(id){return db.items.find(x=>x.id===id)?.name||'کالای حذف‌شده'}
+function addPayment(e){e.preventDefault();let f=new FormData(e.target),p=db.purchases.find(x=>x.id===f.get('purchase')),a=+f.get('amount')||0;if(!p)return;p.paid+=a;db.payments.push({id:uid(),purchase:p.id,amount:a,date:f.get('date')||new Date().toLocaleDateString('fa-IR'),method:f.get('method'),ref:f.get('ref')});save();closeModal();toast('پرداخت ثبت شد')}
+
+function renderAll(){renderDashboard();renderProjects();renderPurchases();renderItems();renderSuppliers();renderPayments();renderMovements();renderLedgerSelectors();renderLedger();renderReportSelectors();renderReport()}
+function renderDashboard(){
+let total=db.purchases.reduce((s,x)=>s+x.total,0),paid=db.purchases.reduce((s,x)=>s+x.paid,0);
+document.getElementById('totalPurchases').textContent=fa(total);document.getElementById('totalPaid').textContent=fa(paid);document.getElementById('totalDebt').textContent=fa(total-paid);document.getElementById('projectCount').textContent=fa(db.projects.length);
+let rp=db.purchases.slice(-6).reverse();document.getElementById('recentPurchases').innerHTML=rp.length?`<div class="tablewrap"><table><tr><th>پروژه</th><th>کالا</th><th>مبلغ</th></tr>${rp.map(x=>`<tr><td>${esc(projectName(x.project))}</td><td>${esc(itemName(x.item))}</td><td>${money(x.total)}</td></tr>`).join('')}</table></div>`:`<div class="empty">هنوز خریدی ثبت نشده است.</div>`;
+document.getElementById('projectSummary').innerHTML=db.projects.length?`<div class="tablewrap"><table><tr><th>پروژه</th><th>خرید</th><th>بدهی</th></tr>${db.projects.map(p=>{let ps=db.purchases.filter(x=>x.project===p.id),t=ps.reduce((s,x)=>s+x.total,0),d=ps.reduce((s,x)=>s+x.total-x.paid,0);return `<tr><td>${esc(p.name)}</td><td>${money(t)}</td><td>${money(d)}</td></tr>`}).join('')}</table></div>`:`<div class="empty">پروژه‌ای ندارید.</div>`
+}
+function renderProjects(q=''){q=q.toLowerCase();let arr=db.projects.filter(x=>(x.name+x.code+x.client).toLowerCase().includes(q));document.getElementById('projectsTable').innerHTML=arr.length?`<div class="tablewrap"><table><tr><th>نام</th><th>کد</th><th>کارفرما</th><th>بودجه</th><th>هزینه</th><th>عملیات</th></tr>${arr.map(p=>{let c=db.purchases.filter(x=>x.project===p.id).reduce((s,x)=>s+x.total,0);return `<tr><td>${esc(p.name)}</td><td>${esc(p.code||'-')}</td><td>${esc(p.client||'-')}</td><td>${money(p.budget)}</td><td>${money(c)}</td><td><div class="row-actions"><button class="del" onclick="deleteProject('${p.id}')">حذف</button></div></td></tr>`}).join('')}</table></div>`:`<div class="empty">پروژه‌ای پیدا نشد.</div>`}
+function renderPurchases(q=''){q=q.toLowerCase();let arr=db.purchases.filter(x=>(projectName(x.project)+itemName(x.item)+supplierName(x.supplier)+x.note).toLowerCase().includes(q));document.getElementById('purchasesTable').innerHTML=arr.length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>پروژه</th><th>کالا</th><th>مقدار</th><th>مبلغ</th><th>پرداخت</th><th>بدهی</th><th>عملیات</th></tr>${arr.slice().reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(projectName(x.project))}</td><td>${esc(itemName(x.item))}</td><td>${fa(x.qty)}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.total-x.paid)}</td><td><div class="row-actions"><button class="del" onclick="deletePurchase('${x.id}')">حذف</button></div></td></tr>`).join('')}</table></div>`:`<div class="empty">خریدی پیدا نشد.</div>`}
+function renderItems(q=''){q=q.toLowerCase();let arr=db.items.filter(x=>x.name.toLowerCase().includes(q));document.getElementById('itemsTable').innerHTML=arr.length?`<div class="tablewrap"><table><tr><th>کالا</th><th>واحد</th><th>موجودی</th><th>حداقل</th><th>وضعیت</th><th>عملیات</th></tr>${arr.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.unit)}</td><td>${fa(x.stock)}</td><td>${fa(x.min)}</td><td>${x.stock<=x.min?'<span class="badge" style="color:#c62828">نیاز به خرید</span>':'<span class="badge">مناسب</span>'}</td><td><div class="row-actions"><button class="del" onclick="deleteItem('${x.id}')">حذف</button></div></td></tr>`).join('')}</table></div>`:`<div class="empty">کالایی پیدا نشد.</div>`}
+function renderSuppliers(q=''){q=q.toLowerCase();let arr=db.suppliers.filter(x=>(x.name+x.phone).toLowerCase().includes(q));document.getElementById('suppliersTable').innerHTML=arr.length?`<div class="tablewrap"><table><tr><th>نام</th><th>تماس</th><th>خرید کل</th><th>بدهی</th><th>عملیات</th></tr>${arr.map(s=>{let ps=db.purchases.filter(x=>x.supplier===s.id),t=ps.reduce((a,x)=>a+x.total,0),d=ps.reduce((a,x)=>a+x.total-x.paid,0);return `<tr><td>${esc(s.name)}</td><td>${esc(s.phone||'-')}</td><td>${money(t)}</td><td>${money(d)}</td><td><div class="row-actions"><button class="del" onclick="deleteSupplier('${s.id}')">حذف</button></div></td></tr>`}).join('')}</table></div>`:`<div class="empty">تأمین‌کننده‌ای پیدا نشد.</div>`}
+function renderPayments(){let arr=db.payments.slice().reverse();document.getElementById('paymentsTable').innerHTML=arr.length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>پروژه</th><th>مبلغ</th><th>روش</th><th>مرجع</th></tr>${arr.map(x=>{let p=db.purchases.find(y=>y.id===x.purchase);return `<tr><td>${esc(x.date)}</td><td>${esc(projectName(p?.project))}</td><td>${money(x.amount)}</td><td>${esc(x.method)}</td><td>${esc(x.ref||'-')}</td></tr>`}).join('')}</table></div>`:`<div class="empty">پرداختی ثبت نشده است.</div>`}
+
+function openMovement(){
+ if(!db.items.length){toast('اول کالا تعریف کنید');showPage('items');return}
+ modal('ثبت ورود / خروج انبار',`<form onsubmit="addMovement(event)"><div class="formgrid">
+ <div class="field"><label>نوع حرکت</label><select name="type"><option value="out">خروج / مصرف</option><option value="in">ورود</option></select></div>
+ <div class="field"><label>کالا</label><select name="item" required>${db.items.map(x=>`<option value="${x.id}">${esc(x.name)} (${esc(x.unit)}) | موجودی: ${fa(x.stock)}</option>`).join('')}</select></div>
+ <div class="field"><label>مقدار</label><input name="qty" type="number" step="any" min="0.0001" required></div>
+ <div class="field"><label>پروژه</label><select name="project"><option value="">بدون پروژه</option>${db.projects.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div>
+ <div class="field"><label>تاریخ</label><input name="date" placeholder="۱۴۰۵/۰۶/۰۷"></div>
+ <div class="field full"><label>شرح</label><textarea name="note" placeholder="مثلاً مصرف در طبقه سوم"></textarea></div>
+ </div><br><button class="btn">ثبت حرکت</button></form>`)
+}
+function addMovement(e){
+ e.preventDefault();let f=new FormData(e.target),qty=+f.get('qty')||0,it=db.items.find(x=>x.id===f.get('item')),type=f.get('type');
+ if(!it)return;
+ if(type==='out'&&it.stock<qty){alert('موجودی کافی نیست. موجودی فعلی: '+fa(it.stock)+' '+it.unit);return}
+ it.stock += type==='in'?qty:-qty;
+ if(!db.movements)db.movements=[];
+ db.movements.push({id:uid(),type,item:f.get('item'),qty,project:f.get('project'),date:f.get('date')||new Date().toLocaleDateString('fa-IR'),note:f.get('note')});
+ save();closeModal();toast('حرکت انبار ثبت شد')
+}
+function renderMovements(){
+ const box=document.getElementById('movementsTable');if(!box)return;
+ const arr=(db.movements||[]).slice().reverse();
+ box.innerHTML=arr.length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>نوع</th><th>کالا</th><th>مقدار</th><th>پروژه</th><th>شرح</th><th>عملیات</th></tr>${arr.map(x=>`<tr><td>${esc(x.date)}</td><td>${x.type==='in'?'<span class="badge">ورود</span>':'<span class="badge" style="color:#c62828">خروج / مصرف</span>'}</td><td>${esc(itemName(x.item))}</td><td>${fa(x.qty)} ${esc(db.items.find(i=>i.id===x.item)?.unit||'')}</td><td>${esc(projectName(x.project))}</td><td>${esc(x.note||'-')}</td><td><button class="row-actions" onclick="deleteMovement('${x.id}')">حذف</button></td></tr>`).join('')}</table></div>`:'<div class="empty">حرکت انباری ثبت نشده است.</div>'
+}
+function deleteMovement(id){
+ const x=(db.movements||[]).find(m=>m.id===id);if(!x)return;
+ if(!confirm('این حرکت حذف شود؟ موجودی اصلاح خواهد شد.'))return;
+ const it=db.items.find(i=>i.id===x.item);if(it)it.stock += x.type==='in'?-x.qty:x.qty;
+ db.movements=db.movements.filter(m=>m.id!==id);save();toast('حرکت حذف شد')
+}
+
+function ledgerAutoRows(){
+ let rows=[];
+ db.purchases.forEach(x=>rows.push({id:'p'+x.id,date:x.date,accountId:x.supplier||'none',accountType:'supplier',project:x.project,desc:'خرید '+itemName(x.item),debit:x.total,credit:0,source:'خرید'}));
+ db.payments.forEach(x=>{let p=db.purchases.find(y=>y.id===x.purchase);rows.push({id:'pay'+x.id,date:x.date,accountId:p?.supplier||'none',accountType:'supplier',project:p?.project,desc:'پرداخت بابت خرید '+itemName(p?.item),debit:0,credit:x.amount,source:'پرداخت'})});
+ (db.ledger||[]).forEach(x=>rows.push(x));
+ return rows;
+}
+function renderLedgerSelectors(){
+ const type=document.getElementById('ledgerType'),sel=document.getElementById('ledgerAccount');if(!type||!sel)return;
+ const old=sel.value, t=type.value;
+ let opts=t==='supplier'?db.suppliers.map(x=>({id:x.id,name:x.name})) : t==='project'?db.projects.map(x=>({id:x.id,name:x.name})) : [{id:'all',name:'همه حساب‌ها'}];
+ sel.innerHTML=opts.length?opts.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join(''):'<option value="">حسابی وجود ندارد</option>';
+ if(opts.some(x=>x.id===old))sel.value=old;
+}
+function renderLedger(){
+ const type=document.getElementById('ledgerType')?.value||'supplier', aid=document.getElementById('ledgerAccount')?.value;
+ if(type==='supplier')renderLedgerSelectors(); // harmless refresh for newly added suppliers
+ let rows=ledgerAutoRows().filter(x=>type==='all'||x.accountType===type);
+ if(type!=='all')rows=rows.filter(x=>x.accountId===aid);
+ rows.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+ let debit=rows.reduce((a,x)=>a+x.debit,0),credit=rows.reduce((a,x)=>a+x.credit,0),balance=debit-credit;
+ document.getElementById('ledgerSummary').innerHTML=`<div class="cards" style="margin-top:15px">
+ <div class="card"><div class="label">جمع بدهکار</div><div class="value money">${fa(debit)}</div></div>
+ <div class="card"><div class="label">جمع بستانکار</div><div class="value money">${fa(credit)}</div></div>
+ <div class="card"><div class="label">مانده</div><div class="value money">${fa(Math.abs(balance))}</div><div class="sub">${balance>0?'بدهکار':balance<0?'بستانکار':'تسویه'}</div></div>
+ <div class="card"><div class="label">تعداد اسناد</div><div class="value">${fa(rows.length)}</div></div></div>`;
+ let run=0;
+ document.getElementById('ledgerTable').innerHTML=rows.length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>شرح</th><th>پروژه</th><th>بدهکار</th><th>بستانکار</th><th>مانده</th><th>منبع</th></tr>${rows.map(x=>{run+=x.debit-x.credit;return `<tr><td>${esc(x.date||'-')}</td><td>${esc(x.desc)}</td><td>${esc(projectName(x.project))}</td><td>${x.debit?money(x.debit):'-'}</td><td>${x.credit?money(x.credit):'-'}</td><td>${money(Math.abs(run))} ${run>0?'بدهکار':run<0?'بستانکار':'تسویه'}</td><td>${esc(x.source||'دستی')}</td></tr>`}).join('')}</table></div>`:'<div class="empty">سندی برای این حساب وجود ندارد.</div>';
+}
+function openLedgerEntry(){
+ modal('ثبت سند دستی',`<form onsubmit="addLedgerEntry(event)"><div class="formgrid">
+ <div class="field"><label>نوع حساب</label><select name="accountType" onchange="toggleLedgerAccounts(this)"><option value="supplier">تأمین‌کننده</option><option value="project">پروژه</option></select></div>
+ <div class="field"><label>حساب</label><select name="accountId" id="manualLedgerAccount">${db.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div>
+ <div class="field"><label>تاریخ</label><input name="date" placeholder="۱۴۰۵/۰۶/۰۷"></div>
+ <div class="field"><label>نوع سند</label><select name="side"><option value="debit">بدهکار</option><option value="credit">بستانکار</option></select></div>
+ <div class="field"><label>مبلغ (تومان)</label><input name="amount" type="number" required></div>
+ <div class="field"><label>پروژه</label><select name="project"><option value="">بدون پروژه</option>${db.projects.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div>
+ <div class="field full"><label>شرح</label><textarea name="desc" required></textarea></div></div><br><button class="btn">ثبت سند</button></form>`)
+}
+function toggleLedgerAccounts(el){let s=document.getElementById('manualLedgerAccount');s.innerHTML=(el.value==='supplier'?db.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`):db.projects.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`)).join('')}
+function addLedgerEntry(e){e.preventDefault();let f=new FormData(e.target),a=+f.get('amount')||0;db.ledger.push({id:uid(),date:f.get('date')||new Date().toLocaleDateString('fa-IR'),accountId:f.get('accountId'),accountType:f.get('accountType'),project:f.get('project'),desc:f.get('desc'),debit:f.get('side')==='debit'?a:0,credit:f.get('side')==='credit'?a:0,source:'دستی'});save();closeModal();toast('سند ثبت شد')}
+
+function renderReportSelectors(){
+ const sel=document.getElementById('reportProject'); if(!sel)return;
+ const old=sel.value;
+ sel.innerHTML=db.projects.length?db.projects.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join(''):`<option value="">پروژه‌ای وجود ندارد</option>`;
+ if(db.projects.some(x=>x.id===old))sel.value=old;
+}
+function renderReport(){
+ const box=document.getElementById('reportContent'); if(!box)return;
+ const pid=document.getElementById('reportProject')?.value;
+ const q=(document.getElementById('reportItem')?.value||'').trim().toLowerCase();
+ if(!pid){box.innerHTML='<div class="panel empty">برای شروع یک پروژه بسازید.</div>';return}
+ const ps=db.purchases.filter(x=>x.project===pid && (!q || itemName(x.item).toLowerCase().includes(q)));
+ const total=ps.reduce((a,x)=>a+x.total,0), paid=ps.reduce((a,x)=>a+x.paid,0), debt=total-paid;
+ const byItem={};
+ ps.forEach(x=>{const k=x.item;if(!byItem[k])byItem[k]={name:itemName(k),qty:0,cost:0,count:0};byItem[k].qty+=x.qty;byItem[k].cost+=x.total;byItem[k].count++});
+ const items=Object.values(byItem).sort((a,b)=>b.cost-a.cost);
+ box.innerHTML=`
+ <div class="cards">
+  <div class="card"><div class="label">هزینه کل پروژه</div><div class="value money">${fa(total)}</div><div class="sub">تومان</div></div>
+  <div class="card"><div class="label">پرداخت‌شده</div><div class="value money">${fa(paid)}</div><div class="sub">تومان</div></div>
+  <div class="card"><div class="label">بدهی باقی‌مانده</div><div class="value money">${fa(debt)}</div><div class="sub">تومان</div></div>
+  <div class="card"><div class="label">تعداد خرید</div><div class="value">${fa(ps.length)}</div><div class="sub">فاکتور / ثبت خرید</div></div>
+ </div>
+ <div class="panel">
+  <h2>جمع مصرف و خرید کالاها</h2>
+  ${items.length?`<div class="tablewrap"><table><tr><th>کالا</th><th>مجموع مقدار</th><th>واحد</th><th>تعداد خرید</th><th>هزینه کل</th><th>میانگین قیمت واحد</th></tr>
+  ${items.map(x=>{let unit=db.items.find(i=>i.id===Object.keys(byItem).find(k=>byItem[k]===x))?.unit||'';return `<tr><td>${esc(x.name)}</td><td>${fa(x.qty)}</td><td>${esc(unit)}</td><td>${fa(x.count)}</td><td>${money(x.cost)}</td><td>${money(x.qty?x.cost/x.qty:0)}</td></tr>`}).join('')}</table></div>`:'<div class="empty">برای این پروژه خریدی ثبت نشده است.</div>'}
+ </div>
+ <div class="panel">
+  <h2>ریز خریدهای این پروژه</h2>
+  ${ps.length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>کالا</th><th>تأمین‌کننده</th><th>مقدار</th><th>قیمت واحد</th><th>مبلغ</th><th>پرداخت</th><th>بدهی</th></tr>
+  ${ps.slice().reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(itemName(x.item))}</td><td>${esc(supplierName(x.supplier))}</td><td>${fa(x.qty)}</td><td>${money(x.price)}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.total-x.paid)}</td></tr>`).join('')}</table></div>`:'<div class="empty">رکوردی وجود ندارد.</div>'}
+ </div>`;
+}
+
+function renderReportSelectors(){
+ const sel=document.getElementById('reportProject');if(!sel)return;const old=sel.value;
+ sel.innerHTML=db.projects.length?db.projects.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join(''):'<option value="">پروژه‌ای وجود ندارد</option>';
+ if(db.projects.some(x=>x.id===old))sel.value=old;
+}
+function renderReport(){
+ const box=document.getElementById('reportContent');if(!box)return;const pid=document.getElementById('reportProject')?.value;
+ const q=(document.getElementById('reportItem')?.value||'').trim().toLowerCase();
+ if(!pid){box.innerHTML='<div class="panel empty">برای شروع یک پروژه بسازید.</div>';return}
+ const p=db.projects.find(x=>x.id===pid), all=db.purchases.filter(x=>x.project===pid);
+ const ps=all.filter(x=>!q||itemName(x.item).toLowerCase().includes(q));
+ const total=all.reduce((a,x)=>a+x.total,0),paid=all.reduce((a,x)=>a+x.paid,0),debt=total-paid,budget=p?.budget||0;
+ const map={};all.forEach(x=>{if(!map[x.item])map[x.item]={id:x.item,name:itemName(x.item),qty:0,cost:0,count:0};map[x.item].qty+=x.qty;map[x.item].cost+=x.total;map[x.item].count++});
+ const items=Object.values(map).map(x=>{const it=db.items.find(i=>i.id===x.id)||{}, outs=(db.movements||[]).filter(m=>m.item===x.id&&m.type==='out'&&m.project===pid).reduce((a,m)=>a+m.qty,0), ins=(db.movements||[]).filter(m=>m.item===x.id&&m.type==='in'&&m.project===pid).reduce((a,m)=>a+m.qty,0);return {...x,unit:it.unit||'',consumed:outs,projectIn:ins,stock:it.stock||0}}).sort((a,b)=>b.cost-a.cost), months={};
+ all.forEach(x=>{let m=x.date||'بدون تاریخ';if(!months[m])months[m]={m,total:0,count:0};months[m].total+=x.total;months[m].count++});
+ const sm={};all.forEach(x=>{let k=x.supplier||'';if(!sm[k])sm[k]={name:supplierName(k),total:0,paid:0,count:0};sm[k].total+=x.total;sm[k].paid+=x.paid;sm[k].count++});
+ box.innerHTML=`<div class="cards">
+ <div class="card"><div class="label">هزینه کل پروژه</div><div class="value money">${fa(total)}</div><div class="sub">تومان</div></div>
+ <div class="card"><div class="label">پرداخت‌شده</div><div class="value money">${fa(paid)}</div><div class="sub">تومان</div></div>
+ <div class="card"><div class="label">بدهی</div><div class="value money">${fa(debt)}</div><div class="sub">تومان</div></div>
+ <div class="card"><div class="label">بودجه</div><div class="value money">${fa(budget)}</div><div class="sub">${budget?(total<=budget?'مانده: '+fa(budget-total):'عبور: '+fa(total-budget)):'تعریف نشده'}</div></div></div>
+ <div class="grid2">
+ <div class="panel"><h2>مصرف / خرید کالاها</h2>${items.length?`<div class="tablewrap"><table><tr><th>کالا</th><th>مقدار کل</th><th>واحد</th><th>دفعات</th><th>هزینه</th><th>میانگین واحد</th></tr>${items.map(x=>{let u=db.items.find(i=>i.id===x.id)?.unit||'';return `<tr><td>${esc(x.name)}</td><td>${fa(x.qty)}</td><td>${fa(x.consumed)}</td><td>${fa(x.stock)}</td><td>${esc(x.unit)}</td><td>${fa(x.count)}</td><td>${money(x.cost)}</td><td>${money(x.qty?x.cost/x.qty:0)}</td></tr>`}).join('')}</table></div>`:'<div class="empty">اطلاعاتی نیست.</div>'}</div>
+ <div class="panel"><h2>خرید به تفکیک تاریخ</h2>${Object.values(months).length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>دفعات</th><th>هزینه</th></tr>${Object.values(months).map(x=>`<tr><td>${esc(x.m)}</td><td>${fa(x.count)}</td><td>${money(x.total)}</td></tr>`).join('')}</table></div>`:'<div class="empty">اطلاعاتی نیست.</div>'}</div></div>
+ <div class="panel"><h2>تأمین‌کنندگان پروژه</h2>${Object.values(sm).length?`<div class="tablewrap"><table><tr><th>تأمین‌کننده</th><th>دفعات</th><th>خرید</th><th>پرداخت</th><th>بدهی</th></tr>${Object.values(sm).sort((a,b)=>b.total-a.total).map(x=>`<tr><td>${esc(x.name)}</td><td>${fa(x.count)}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.total-x.paid)}</td></tr>`).join('')}</table></div>`:'<div class="empty">اطلاعاتی نیست.</div>'}</div>
+ <div class="panel"><h2>ریز خریدهای ${esc(p?.name||'')}</h2>${ps.length?`<div class="tablewrap"><table><tr><th>تاریخ</th><th>کالا</th><th>تأمین‌کننده</th><th>مقدار</th><th>قیمت واحد</th><th>مبلغ</th><th>پرداخت</th><th>بدهی</th></tr>${ps.slice().reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(itemName(x.item))}</td><td>${esc(supplierName(x.supplier))}</td><td>${fa(x.qty)}</td><td>${money(x.price)}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.total-x.paid)}</td></tr>`).join('')}</table></div>`:'<div class="empty">رکوردی نیست.</div>'}</div>`;
+}
+function exportReportCSV(){const pid=document.getElementById('reportProject')?.value;if(!pid)return;let csv='تاریخ,کالا,تامین‌کننده,مقدار,واحد,قیمت واحد,مبلغ,پرداخت,بدهی\n';db.purchases.filter(x=>x.project===pid).forEach(x=>{let u=db.items.find(i=>i.id===x.item)?.unit||'';csv+=[x.date,itemName(x.item),supplierName(x.supplier),x.qty,u,x.price,x.total,x.paid,x.total-x.paid].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')+'\n'});let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='گزارش-پروژه.csv';a.click();toast('گزارش آماده شد')}
+function printReport(){let c=document.getElementById('reportContent').innerHTML,w=window.open('','_blank');w.document.write(`<html dir="rtl"><head><meta charset="UTF-8"><title>گزارش پروژه</title><style>body{font-family:Tahoma;padding:20px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:7px;font-size:11px;text-align:right}th{background:#eee}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.card{border:1px solid #bbb;padding:10px}.value{font-weight:bold}</style></head><body><h1>گزارش پروژه</h1>${c}</body></html>`);w.document.close();setTimeout(()=>w.print(),300)}
+
+function deleteProject(id){if(confirm('پروژه حذف شود؟ خریدهای آن حذف نمی‌شوند.')){db.projects=db.projects.filter(x=>x.id!==id);save();toast('حذف شد')}}
+function deleteSupplier(id){if(confirm('تأمین‌کننده حذف شود؟')){db.suppliers=db.suppliers.filter(x=>x.id!==id);save();toast('حذف شد')}}
+function deleteItem(id){if(confirm('کالا حذف شود؟')){db.items=db.items.filter(x=>x.id!==id);save();toast('حذف شد')}}
+function deletePurchase(id){let p=db.purchases.find(x=>x.id===id);if(confirm('خرید حذف شود؟ موجودی کالای آن هم اصلاح می‌شود.')){let it=db.items.find(x=>x.id===p?.item);if(it)it.stock-=p.qty;db.purchases=db.purchases.filter(x=>x.id!==id);db.payments=db.payments.filter(x=>x.purchase!==id);save();toast('خرید حذف شد')}}
+
+function backup(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hesabyar-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)}
+function restore(inp){let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.projects||!x.purchases)throw 0;db=x;save();toast('پشتیبان بازیابی شد')}catch(e){alert('فایل پشتیبان معتبر نیست')}};r.readAsText(f)}
+function resetData(){if(confirm('تمام اطلاعات پاک شود؟ این کار قابل بازگشت نیست.')){db={projects:[],purchases:[],items:[],suppliers:[],payments:[]};save();toast('اطلاعات پاک شد')}}
+renderAll();
+</script>
+</body>
+</html>
