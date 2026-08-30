@@ -1,0 +1,10 @@
+name = "hesabyar-bot"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# توکن ربات تلگرام را اینجا قرار دهید
+TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+
+# محیط توسعه یا تولید (development/production)
+ENVIRONMENT = "production"
