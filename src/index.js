@@ -1,4 +1,4 @@
-// Hesabyar Bot - Cloudflare Worker Entry Point
+// Hesabyar Bot with Pollinations.ai - Cloudflare Worker Entry Point
 
 export default {
   async fetch(request, env, ctx) {
@@ -10,7 +10,8 @@ export default {
         const update = await request.json();
         
         // پردازش آپدیت‌های تلگرام
-        await handleUpdate(update, env);
+        // استفاده از ctx.waitUntil برای جلوگیری از تایم‌اوت شدن وب‌هوک تلگرام
+        ctx.waitUntil(handleUpdate(update, env));
         
         return new Response("OK", { status: 200 });
       } catch (error) {
@@ -21,7 +22,7 @@ export default {
     
     // پاسخ به درخواست‌های GET (برای تست)
     if (request.method === "GET") {
-      return new Response("Hesabyar Bot is running!", { 
+      return new Response("AI Bot is running!", { 
         status: 200,
         headers: { "Content-Type": "text/plain" }
       });
@@ -32,16 +33,44 @@ export default {
 };
 
 async function handleUpdate(update, env) {
-  // اینجا منطق پردازش پیام‌های تلگرام قرار می‌گیرد
-  if (update.message) {
+  // بررسی وجود پیام و متن متنی (برای جلوگیری از خطای عکس و استیکر)
+  if (update.message && update.message.text) {
     const chatId = update.message.chat.id;
     const text = update.message.text;
+    const botToken = env.TELEGRAM_BOT_TOKEN;
     
-    // پاسخ ساده برای تست
-    await sendMessage(chatId, `دریافت شد: ${text}`, env.TELEGRAM_BOT_TOKEN);
+    // ۱. ارسال وضعیت "در حال تایپ..." به کاربر
+    await sendChatAction(chatId, "typing", botToken);
+
+    try {
+      // ۲. دریافت پاسخ از هوش مصنوعی Pollinations
+      const aiResponse = await getPollinationsResponse(text);
+      
+      // ۳. ارسال پاسخ هوش مصنوعی به کاربر
+      await sendMessage(chatId, aiResponse, botToken);
+    } catch (error) {
+      console.error("AI API Error:", error);
+      await sendMessage(chatId, "❌ متاسفانه در ارتباط با هوش مصنوعی خطایی رخ داد. لطفا دوباره تلاش کنید.", botToken);
+    }
   }
 }
 
+// تابع ارتباط با API متنی Pollinations
+async function getPollinationsResponse(prompt) {
+  // استفاده از اندپوینت متنی Pollinations
+  const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}`;
+  
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error(`Pollinations API Error: ${response.status}`);
+  }
+  
+  // خروجی به صورت متن ساده (Plain text) برمی‌گردد
+  return await response.text();
+}
+
+// تابع ارسال پیام در تلگرام
 async function sendMessage(chatId, text, botToken) {
   const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
   
@@ -50,7 +79,22 @@ async function sendMessage(chatId, text, botToken) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       chat_id: chatId,
-      text: text
+      text: text,
+      parse_mode: "Markdown" // پشتیبانی از ظاهر شدن بولد و ایتالیک در پیام
+    })
+  });
+}
+
+// تابع ارسال اکشن (مثل در حال تایپ کردن)
+async function sendChatAction(chatId, action, botToken) {
+  const url = `https://api.telegram.org/bot${botToken}/sendChatAction`;
+  
+  await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      action: action
     })
   });
 }
